@@ -30,11 +30,10 @@ bool TF=false;//用于判断是否清除的变量
 bool TH=false;//用于判断是否是充值操作
 bool TE=true;//用于判断在刷卡情况下指纹是否采集成功
 bool TL=false;//用于判断是否刷指纹了
-int zid=19;//注册时的id号
-int cid=0;
+uint8_t zid=19;//注册时的id号
+uint8_t cid=0;
 double jine;
 String cmoney,Name;
-String df;
 void key(int a[])
 {
   int j=0;
@@ -398,6 +397,7 @@ uint8_t getFingerprintEnroll()
 }
 void wifi1()//WiFi连接子程序
 {
+  // Serial1.listen();
   Serial1.println("AT+RST");
   delay(500);
     Serial1.println("AT+CWMODE=3");
@@ -412,15 +412,16 @@ void wifi1()//WiFi连接子程序
 }
 void wifizhucesend()//WiFi发送数据子程序
 {
+  // Serial1.listen();
   String zhuc="001#"+(String)zid+",1000%";
   Serial1.print("AT+CIPSEND=");
   Serial1.println(zhuc.length());
   Serial1.println(zhuc);
-  
   delay(1000);
 }
-void congzhisend()
+void congzhisend()//充值
 {
+  // Serial1.listen();
   String congz="002#"+(String)cid+",1000%";
   Serial1.print("AT+CIPSEND=");
   Serial1.println(congz.length());
@@ -428,10 +429,12 @@ void congzhisend()
   delay(1000);
 }
 void wifisend(){
+  // Serial1.listen();
  String xiaof="%("+(String)cid+")("+(String)jine+")%";
  Serial1.print("AT+CIPSEND=");
  Serial1.println(xiaof.length());
  Serial1.println(xiaof);
+
   delay(1000);
 	while(Serial1.read()>=0){
 	Serial.print((char)Serial1.read());
@@ -444,6 +447,8 @@ void setup()
     Serial.begin(9600);//定义波特
     finger.begin(9600);
     Serial1.begin(9600);
+    // wifi1();
+    // mySerial.listen();
     if(finger.verifyPassword())
     Serial.println("right");
     else
@@ -455,7 +460,9 @@ void setup()
     pinMode(A0, OUTPUT);       //.kbv mcufriend have RD on A0
     digitalWrite(A0, HIGH);
     myGLCD.InitLCD();         // Setup the LCD
-    myGLCD.setFont(BigFont);//用于初始化显示屏
+    myGLCD.setFont(BigFont);
+
+    //用于初始化显示屏
     int buf[398];
     int x, x2;
     int y, y2;
@@ -469,53 +476,36 @@ void loop()
   int a[6] = {0, 0, 0, 0, 0, 0};
   ii = 0;
   key(a);
-   if (ii >= 7)
-     return;
+  // delay(1000);
+  // if (ii >= 7)
+    // return;
   if (TF == true)
   {
     TF = false;
-     return;
+    // return;
   }
   if (a[0] == 0 && a[1] == 0 && a[2] == 1)
   {
-    zhucejiemian();
     while (!getFingerprintEnroll());
     wifizhucesend();
-    myGLCD.setColor(0, 250, 0);
-    myGLCD.setBackColor(64, 64, 64);
-    myGLCD.setTextSize(4);
-    myGLCD.print("19", 240, 100);
-    delay(1000);
     zid++;
-    myGLCD.setColor(255, 0, 0);
-    myGLCD.fillRect(10, 180, 389, 220);
-    myGLCD.setColor(64, 64, 64);
-    myGLCD.fillRect(230, 60, 389, 180);
+      LCD(3);
+  
   }
   else if (a[0] == 0 && a[1] == 0 && a[2] == 2)
   {
-    congzhijiemian();
     TH = true;
     for (int pp = 0; pp <= 12; pp++)
     {
       getFingerprintID();
       delay(5);
     }
-    delay(1000);
-    myGLCD.setColor(255, 0, 0);
-    myGLCD.fillRect(10, 180, 389, 220);
-    myGLCD.setColor(64, 64, 64);
-    myGLCD.fillRect(180, 60, 389, 180);
+  
+       LCD(3);
+    //      return;
   }  else if (a[0] == 0 && a[1] == 0 && a[2] == 3)
   {
 	  wifi1();
-    LCD(3); 
-  }
-  else if(a[0]==0&&a[1]==0&&a[2]==4)
-  {
-    jiemian();
-    delay(1000);
-    LCD(1);
   }
   else
   {
@@ -529,6 +519,7 @@ void loop()
     }
 	if (TE && TL)
   {
+	  
     while (!Serial1.available());
     delay(1000);
     wifi3();
@@ -539,10 +530,32 @@ void loop()
     delay(2000);
 	Serial.println("point 2");
   }
-  Serial.println("point 3");
-LCD(3);
   }
+Serial.println("point 3");
+LCD(3);
 }
+// void loop()
+// {
+  // int a[6]={0,0,0,0,0,0};
+  // ii=0;
+ 
+	// if(keypad.getKey()=='#')
+       // {
+       // // Serial1.listen();
+	   // Serial.println("Serial1.listen");
+       // // while(!Serial1.available());
+       // delay(1000);
+       // wifi3();
+       // LCD(14);
+	   // Serial.println(Name);
+	   // Serial.println(cmoney);
+       // myGLCD.print(Name,150,110);
+       // LCD(15);
+       // myGLCD.print(cmoney,150,150);
+       // delay(2000);
+       // }
+   // // L1: LCD(3);
+// }
 double chartoint(int t[])
 {
   double sum=0;
@@ -610,8 +623,9 @@ uint8_t getFingerprintID()
   else if (p == FINGERPRINT_NOTFOUND)
   {
     LCD(6);
-       tone(41, 10000, 2500);// 播放音频  接arduino9号端口，thispitch为播放频率，10为维持时间
+        tone(41, 10000, 2500);// 播放音频  接arduino9号端口，thispitch为播放频率，10为维持时间
     delay(4000);
+//    TH = false;这地方需要处理
     TE = false;
     LCD(3);
    return p;
@@ -623,8 +637,9 @@ uint8_t getFingerprintID()
     if (p == FINGERPRINT_OK)
   {
         LCD(7);//在这添加输出用户姓名与余额
-   tone(41, 10000, 500);
+    tone(41, 10000, 500);
     delay(4000);// 播放音频  接arduino9号端口，thispitch为播放频率，10为维持时间
+    //TE = true;这地方需要修改
     LCD(8);
   }
   cid=finger.fingerID;
@@ -632,10 +647,6 @@ uint8_t getFingerprintID()
   {
     TH=false;
     congzhisend();
-     myGLCD.setColor(0, 250, 0);
-     myGLCD.setBackColor(64, 64, 64);
-     myGLCD.setTextSize(4);
-     myGLCD.print("19", 200, 70);
   }
 else
 {
@@ -648,12 +659,17 @@ void wifi3()//WiFi接收数据子程序
   char ch;
   cmoney="";
   Name="";
+  // Serial1.listen();
   Serial.println("Serial1.listen in wifi3");
   long time=millis();
   while(1)
   {
+	 
     ch=Serial1.read();
+	// if((int)ch>33&&(int)ch<126){
 		Serial.print(ch);Serial.print(":");Serial.print((int)ch);Serial.print(";");
+	// }
+	
 	bool return_flag=false;
     if(ch=='@')
     {
@@ -702,69 +718,4 @@ void wifi3()//WiFi接收数据子程序
 	}
   }
 }
-void jiemian()
-{
-        myGLCD.setColor(0, 0, 255);
-        myGLCD.fillRect(10, 20, 389, 60);
-        myGLCD.setColor(0, 250, 0);
-        myGLCD.setBackColor(0, 0, 255);
-        myGLCD.setTextSize(2.8);
-        myGLCD.print("welcome to use our product", 40, 30);
-        myGLCD.setColor(64, 64, 64);
-        myGLCD.fillRect(10, 60, 389, 220);
-        myGLCD.setColor(0, 250, 0);
-        myGLCD.setBackColor(64, 64, 64);
-        myGLCD.setTextSize(3);
-        myGLCD.print("1.enrool:001", 20, 70);
-        myGLCD.setColor(0, 250, 0);
-        myGLCD.setBackColor(64, 64, 64);
-        myGLCD.setTextSize(3);
-        myGLCD.print("4.consume:default", 20, 150);
-        myGLCD.setColor(0, 250, 0);
-        myGLCD.setBackColor(64, 64, 64);
-        myGLCD.setTextSize(3);
-        myGLCD.print("2.recharge:002", 20, 110);
-         myGLCD.setColor(0, 250, 0);
-        myGLCD.setBackColor(64, 64, 64);
-        myGLCD.setTextSize(3);
-        myGLCD.print("3.lianjie:003", 20, 190);
-}
-void zhucejiemian()//注册时的界面：
-    {
-        myGLCD.clrScr();
-        myGLCD.setColor(0, 0, 255);
-        myGLCD.fillRect(10, 20, 389, 60);
-        myGLCD.setColor(0, 250, 0);
-        myGLCD.setBackColor(0, 0, 255);
-        myGLCD.setTextSize(3);
-        myGLCD.print("enroll", 120, 30);
-        myGLCD.setColor(255, 0, 0);
-        myGLCD.fillRect(10, 180, 389, 220);
-        myGLCD.setColor(64, 64, 64);
-        myGLCD.fillRect(10, 60, 389, 180);
-        myGLCD.setColor(0, 250, 0);
-        myGLCD.setBackColor(64, 64, 64);
-        myGLCD.setTextSize(4);
-        myGLCD.print("your ID:", 30, 100);
-    }
-    void congzhijiemian()
-    {
-       myGLCD.setColor(0, 0, 255);
-        myGLCD.fillRect(10, 20, 389, 60);
-        myGLCD.setColor(0, 250, 0);
-        myGLCD.setBackColor(0, 0, 255);
-        myGLCD.setTextSize(3);
-        myGLCD.print("recharge", 120, 30);
-        myGLCD.setColor(255, 0, 0);
-        myGLCD.fillRect(10, 180, 389, 220);
-        myGLCD.setColor(64, 64, 64);
-        myGLCD.fillRect(10, 60, 389, 180);
-        myGLCD.setColor(0, 250, 0);
-        myGLCD.setBackColor(64, 64, 64);
-        myGLCD.setTextSize(4);
-        myGLCD.print("money: 1000", 20, 120);
-        myGLCD.setColor(0, 250, 0);
-        myGLCD.setBackColor(64, 64, 64);
-        myGLCD.setTextSize(4);
-        myGLCD.print("YourID:", 20, 70);
-    }
+

@@ -1,3 +1,7 @@
+/* Ö¸ÎÆ½ÓÊÕÄ£¿é£º
+	1.¿ÉÒÔ½ÓÊÕµ½ÉÏÎ»»úÊı¾İ£¬µ«Ê±¼äÌ«³¤£¬ĞèÒªÖØ¸´·¢ËÍ
+	2.Ã¿¸öÑ­»·µ¥Æ¬»ú»áÖØÆô */
+
 #include <Adafruit_Fingerprint.h>
 #include <SoftwareSerial.h>
 uint8_t id;
@@ -16,7 +20,7 @@ extern uint8_t SmallFont[];    //.kbv GLUE defines as GFXFont ref
 #endif
 const byte ROWS = 4; // 4 Rows
 const byte COLS = 3; // 3 Columns
-char keys[ROWS][COLS] = { // å®šç¾© Keypad çš„æŒ‰éµ
+char keys[ROWS][COLS] = { // ¶¨Áx Keypad µÄ°´æI
   {'1', '2', '3'},
   {'4', '5', '6'},
   {'7', '8', '9'},
@@ -26,11 +30,11 @@ byte rowPins[ROWS] = {28, 27, 26, 25};
 byte colPins[COLS] = {24, 23, 22};
 Keypad keypad=Keypad( makeKeymap(keys), rowPins, colPins, ROWS, COLS );
 int ii=0;
-bool TF=false;//ç”¨äºåˆ¤æ–­æ˜¯å¦æ¸…é™¤çš„å˜é‡
-bool TH=false;//ç”¨äºåˆ¤æ–­æ˜¯å¦æ˜¯å……å€¼æ“ä½œ
-bool TE=true;//ç”¨äºåˆ¤æ–­åœ¨åˆ·å¡æƒ…å†µä¸‹æŒ‡çº¹æ˜¯å¦é‡‡é›†æˆåŠŸ
-bool TL=false;//ç”¨äºåˆ¤æ–­æ˜¯å¦åˆ·æŒ‡çº¹äº†
-int zid=19;//æ³¨å†Œæ—¶çš„idå·
+bool TF=false;//ÓÃÓÚÅĞ¶ÏÊÇ·ñÇå³ıµÄ±äÁ¿
+bool TH=false;//ÓÃÓÚÅĞ¶ÏÊÇ·ñÊÇ³äÖµ²Ù×÷
+bool TE=true;//ÓÃÓÚÅĞ¶ÏÔÚË¢¿¨Çé¿öÏÂÖ¸ÎÆÊÇ·ñ²É¼¯³É¹¦
+bool TL=false;//ÓÃÓÚÅĞ¶ÏÊÇ·ñË¢Ö¸ÎÆÁË
+int zid=19;//×¢²áÊ±µÄidºÅ
 int cid=0;
 double jine;
 String cmoney,Name;
@@ -47,7 +51,7 @@ void key(int a[])
       for(j=0;j<=30;j++)
       {
         key=keypad.getKey();
-        if(key=='#')//è°ƒç”¨æ¸…å¹³å­ç¨‹åº//
+        if(key=='#')//µ÷ÓÃÇåÆ½×Ó³ÌĞò//
         {
           TF=true;
           LCD(4);
@@ -60,7 +64,7 @@ void key(int a[])
       return;
     }
     else
-      if(ii>=7)//è°ƒç”¨æç¤ºæ•°å­—è¿‡å¤§å­ç¨‹åº//
+      if(ii>=7)//µ÷ÓÃÌáÊ¾Êı×Ö¹ı´ó×Ó³ÌĞò//
       {
         LCD(2);
         delay(1000);
@@ -75,7 +79,7 @@ void key(int a[])
          String cc=(String)key;
           if(ii==0)
             LCD(16);
-          dayin(3,cc);//è°ƒç”¨æ˜¾ç¤ºå­ç¨‹åº//
+          dayin(3,cc);//µ÷ÓÃÏÔÊ¾×Ó³ÌĞò//
           ii++;
         }
         else
@@ -92,7 +96,7 @@ void LCD(int i)
 {
   switch(i)
   {
-  case 1://åˆå§‹åŒ–å±å¹•
+  case 1://³õÊ¼»¯ÆÁÄ»
     {
         myGLCD.clrScr();
         myGLCD.setColor(255, 255, 255);
@@ -121,7 +125,7 @@ void LCD(int i)
         myGLCD.print("name:", 30, 110);
         break;
     }
-  case 2://å­—æ•°è¶…è¿‡7æ—¶æç¤ºè¯­
+  case 2://×ÖÊı³¬¹ı7Ê±ÌáÊ¾Óï
     {
             myGLCD.setColor(0, 250, 0);
             myGLCD.setBackColor(250, 0, 0);
@@ -129,7 +133,7 @@ void LCD(int i)
             myGLCD.print("The number is to big", 80, 190 );
             break;
     }
-  case 3://åˆ·ä¸­é—´å±å¹•
+  case 3://Ë¢ÖĞ¼äÆÁÄ»
     {
         myGLCD.setColor(255, 0, 0);
       myGLCD.fillRect(10, 180, 389, 220);
@@ -137,7 +141,7 @@ void LCD(int i)
       myGLCD.fillRect(135, 60, 389, 180);
       break;
     }
-  case 4://æ¸…é™¤æç¤ºè¯­
+  case 4://Çå³ıÌáÊ¾Óï
      {
             myGLCD.setColor(0, 250, 0);
             myGLCD.setBackColor(250, 0, 0);
@@ -145,7 +149,7 @@ void LCD(int i)
             myGLCD.print("clear!", 170 , 190 );
             break;
      }
-  case 5://æç¤ºåˆ·å¡æ“ä½œ
+  case 5://ÌáÊ¾Ë¢¿¨²Ù×÷
     {
       myGLCD.setColor(0, 250, 0);
       myGLCD.setBackColor(250, 0, 0);
@@ -153,7 +157,7 @@ void LCD(int i)
       myGLCD.print("please post the cord", 80, 190 );
       break;
     }
-  case 6://æç¤ºæŒ‡çº¹è¾“å…¥é”™è¯¯
+  case 6://ÌáÊ¾Ö¸ÎÆÊäÈë´íÎó
     {
             myGLCD.setColor(0, 250, 0);
             myGLCD.setBackColor(250, 0, 0);
@@ -161,7 +165,7 @@ void LCD(int i)
             myGLCD.print("The finger is rong!!", 80, 190 );
             break;
     }
-  case 7://æç¤ºæŒ‡çº¹è¾“å…¥æ­£ç¡®
+  case 7://ÌáÊ¾Ö¸ÎÆÊäÈëÕıÈ·
     {
             myGLCD.setColor(0, 250, 0);
             myGLCD.setBackColor(250, 0, 0);
@@ -169,13 +173,13 @@ void LCD(int i)
             myGLCD.print("The finger is right!", 80, 190 );
             break;
     }
-  case 8://åˆ·ä¸‹è¾¹æ¡å¹…
+  case 8://Ë¢ÏÂ±ßÌõ·ù
     {
             myGLCD.setColor(255, 0, 0);
             myGLCD.fillRect(10, 180, 389, 220);
             break;
     }
-  case 9://æ³¨å†Œæ—¶æç¤ºæ”¾å…¥æŒ‡çº¹
+  case 9://×¢²áÊ±ÌáÊ¾·ÅÈëÖ¸ÎÆ
     {
             myGLCD.setColor(0, 250, 0);
             myGLCD.setBackColor(250, 0, 0);
@@ -183,7 +187,7 @@ void LCD(int i)
             myGLCD.print("please put your finger", 80, 190 );
             break;
     }
-  case 10://æ³¨å†Œæ—¶æç¤ºå›¾åƒå·²é‡‡é›†
+  case 10://×¢²áÊ±ÌáÊ¾Í¼ÏñÒÑ²É¼¯
     {
             myGLCD.setColor(255, 0, 0);
             myGLCD.fillRect(10, 180, 389, 220);
@@ -193,7 +197,7 @@ void LCD(int i)
             myGLCD.print("Image converted", 120, 190);
             break;
     }
-  case 11://æ³¨å†Œæ—¶æç¤ºå†æ¬¡æ”¾å…¥æŒ‡çº¹
+  case 11://×¢²áÊ±ÌáÊ¾ÔÙ´Î·ÅÈëÖ¸ÎÆ
     {
             myGLCD.setColor(255, 0, 0);
             myGLCD.fillRect(10, 180, 389, 220);
@@ -203,7 +207,7 @@ void LCD(int i)
             myGLCD.print("Rmove your finger", 80, 190 );
             break;
     }
-  case 13://æ³¨å†Œæ—¶æç¤ºæŒ‡çº¹ä»¥ä¿å­˜
+  case 13://×¢²áÊ±ÌáÊ¾Ö¸ÎÆÒÔ±£´æ
     {
       myGLCD.setColor(255, 0, 0);
       myGLCD.fillRect(10, 180, 389, 220);
@@ -213,7 +217,7 @@ void LCD(int i)
       myGLCD.print("Stored!", 180, 190 );
       break;
     }
-  case 14://æ‰“å°IDå·æ—¶çš„å®šä½ç¬¦
+  case 14://´òÓ¡IDºÅÊ±µÄ¶¨Î»·û
     {
             myGLCD.setColor(0, 250, 0);
             myGLCD.setBackColor(64, 64, 64);
@@ -221,7 +225,7 @@ void LCD(int i)
             myGLCD.print("", 150, 110);
             break;
     }
-  case 15://æ‰“å°ä½™é¢æ—¶çš„å®šä½ç¬¦
+  case 15://´òÓ¡Óà¶îÊ±µÄ¶¨Î»·û
     {
              myGLCD.setColor(0, 250, 0);
              myGLCD.setBackColor(64, 64, 64);
@@ -229,12 +233,12 @@ void LCD(int i)
              myGLCD.print("", 150, 150);
              break;
     }
-  case 16://æ‰“å°è¾“å…¥é‡‘é¢æ—¶çš„å®šä½ç¬¦
+  case 16://´òÓ¡ÊäÈë½ğ¶îÊ±µÄ¶¨Î»·û
     {
              myGLCD.print(" ", 120, 70);
              break;
     }
-  case 17://æç¤ºå†æ¬¡æ”¾å…¥æŒ‡çº¹ï¼Œæ³¨å†Œæ—¶
+  case 17://ÌáÊ¾ÔÙ´Î·ÅÈëÖ¸ÎÆ£¬×¢²áÊ±
     {
             myGLCD.setColor(255, 0, 0);
       myGLCD.fillRect(10, 180, 389, 220);
@@ -250,7 +254,7 @@ void dayin(int ww,String yy)
 {
   switch (ww)
   {
-  case 1://æ‰“å°IDå·
+  case 1://´òÓ¡IDºÅ
     {
             myGLCD.setColor(0, 250, 0);
             myGLCD.setBackColor(64, 64, 64);
@@ -258,7 +262,7 @@ void dayin(int ww,String yy)
             myGLCD.print(yy, 150, 110);
             break;
     }
-  case 2://æ‰“å°ä½™é¢
+  case 2://´òÓ¡Óà¶î
     {
            myGLCD.setColor(0, 250, 0);
            myGLCD.setBackColor(64, 64, 64);
@@ -266,7 +270,7 @@ void dayin(int ww,String yy)
            myGLCD.print(yy, 150, 150);
            break;
     }
-  case 3://æ‰“å°è¾“å…¥é‡‘é¢æ•°å­—å’Œå°æ•°ç‚¹ä¸¤ç§æƒ…å†µ
+  case 3://´òÓ¡ÊäÈë½ğ¶îÊı×ÖºÍĞ¡ÊıµãÁ½ÖÖÇé¿ö
     {
             myGLCD.setColor(0, 250, 0);
             myGLCD.setBackColor(64, 64, 64);
@@ -396,7 +400,7 @@ uint8_t getFingerprintEnroll()
         return p;
   }
 }
-void wifi1()//WiFiè¿æ¥å­ç¨‹åº
+void wifi1()//WiFiÁ¬½Ó×Ó³ÌĞò
 {
   Serial1.println("AT+RST");
   delay(500);
@@ -406,22 +410,21 @@ void wifi1()//WiFiè¿æ¥å­ç¨‹åº
     delay(500);
     for(int i=1;i<10;i++)
   {
-        Serial1.println("AT+CIPSTART=\"TCP\",\"192.168.191.1\",8080");
+        Serial1.println("AT+CIPSTART=\"TCP\",\"192.168.155.1\",8080");
         delay(1000);
   }
 }
-void wifizhucesend()//WiFiå‘é€æ•°æ®å­ç¨‹åº
+void wifizhucesend()//WiFi·¢ËÍÊı¾İ×Ó³ÌĞò
 {
-  String zhuc="001#"+(String)zid+",1000%";
+  String zhuc="001#"+(String)zid+"1000%";
   Serial1.print("AT+CIPSEND=");
   Serial1.println(zhuc.length());
   Serial1.println(zhuc);
-  
   delay(1000);
 }
 void congzhisend()
 {
-  String congz="002#"+(String)cid+",1000%";
+  String congz="002#"+(String)cid+"1000%";
   Serial1.print("AT+CIPSEND=");
   Serial1.println(congz.length());
   Serial1.println(congz);
@@ -441,7 +444,7 @@ void setup()
 {
     while (!Serial);
     delay(500);
-    Serial.begin(9600);//å®šä¹‰æ³¢ç‰¹
+    Serial.begin(9600);//¶¨Òå²¨ÌØ
     finger.begin(9600);
     Serial1.begin(9600);
     if(finger.verifyPassword())
@@ -455,7 +458,7 @@ void setup()
     pinMode(A0, OUTPUT);       //.kbv mcufriend have RD on A0
     digitalWrite(A0, HIGH);
     myGLCD.InitLCD();         // Setup the LCD
-    myGLCD.setFont(BigFont);//ç”¨äºåˆå§‹åŒ–æ˜¾ç¤ºå±
+    myGLCD.setFont(BigFont);//ÓÃÓÚ³õÊ¼»¯ÏÔÊ¾ÆÁ
     int buf[398];
     int x, x2;
     int y, y2;
@@ -610,7 +613,7 @@ uint8_t getFingerprintID()
   else if (p == FINGERPRINT_NOTFOUND)
   {
     LCD(6);
-       tone(41, 10000, 2500);// æ’­æ”¾éŸ³é¢‘  æ¥arduino9å·ç«¯å£ï¼Œthispitchä¸ºæ’­æ”¾é¢‘ç‡ï¼Œ10ä¸ºç»´æŒæ—¶é—´
+//        tone(41, 10000, 2500);// ²¥·ÅÒôÆµ  ½Óarduino9ºÅ¶Ë¿Ú£¬thispitchÎª²¥·ÅÆµÂÊ£¬10ÎªÎ¬³ÖÊ±¼ä
     delay(4000);
     TE = false;
     LCD(3);
@@ -622,9 +625,9 @@ uint8_t getFingerprintID()
   }
     if (p == FINGERPRINT_OK)
   {
-        LCD(7);//åœ¨è¿™æ·»åŠ è¾“å‡ºç”¨æˆ·å§“åä¸ä½™é¢
-   tone(41, 10000, 500);
-    delay(4000);// æ’­æ”¾éŸ³é¢‘  æ¥arduino9å·ç«¯å£ï¼Œthispitchä¸ºæ’­æ”¾é¢‘ç‡ï¼Œ10ä¸ºç»´æŒæ—¶é—´
+        LCD(7);//ÔÚÕâÌí¼ÓÊä³öÓÃ»§ĞÕÃûÓëÓà¶î
+//    tone(41, 10000, 500);
+    delay(4000);// ²¥·ÅÒôÆµ  ½Óarduino9ºÅ¶Ë¿Ú£¬thispitchÎª²¥·ÅÆµÂÊ£¬10ÎªÎ¬³ÖÊ±¼ä
     LCD(8);
   }
   cid=finger.fingerID;
@@ -643,7 +646,7 @@ else
   TL=true;
 }
 }
-void wifi3()//WiFiæ¥æ”¶æ•°æ®å­ç¨‹åº
+void wifi3()//WiFi½ÓÊÕÊı¾İ×Ó³ÌĞò
 {
   char ch;
   cmoney="";
@@ -729,7 +732,7 @@ void jiemian()
         myGLCD.setTextSize(3);
         myGLCD.print("3.lianjie:003", 20, 190);
 }
-void zhucejiemian()//æ³¨å†Œæ—¶çš„ç•Œé¢ï¼š
+void zhucejiemian()//×¢²áÊ±µÄ½çÃæ£º
     {
         myGLCD.clrScr();
         myGLCD.setColor(0, 0, 255);
